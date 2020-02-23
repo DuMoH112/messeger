@@ -1,0 +1,123 @@
+#!/bin/bash
+
+echo "Введите название проекта"
+read project_name
+
+src=`pwd|tr / "\n"|tail -1|head -1 | tr [:upper:] [:lower:]`
+
+sudo docker-compose up -d
+
+echo "Docker stop"
+sudo docker stop $(sudo docker ps -aq)
+
+echo "Docker remove"
+sudo docker rm $(sudo docker ps -aq)
+
+# Create project
+
+echo "Create Django project"
+sudo docker run -v $PWD/backend:/app/backend ${src}_backend:latest django-admin startproject $project_name .
+
+echo "Create React project"
+sudo docker run -v $PWD/frontend:/app/frontend ${src}_frontend:latest npx create-react-app $project_name .
+sudo mv frontend/$project_name/* frontend/$project_name/.gitignore frontend/ && rmdir frontend/$project_name
+
+echo "Create Django API"
+sudo docker-compose run --rm backend python3 manage.py startapp char_count
+echo "Download axios and react-router-dom"
+sudo docker-compose run --rm frontend npm i -S axios react-router-dom
+
+# Change files
+
+echo "Change backend/char_count/views.py"
+echo '
+from django.http import JsonResponse
+
+
+def char_count(request):
+    text = request.GET.get("text", "")
+
+    return JsonResponse({"count": len(text)})
+' > backend/char_count/views.py
+
+echo "Change INSTALLED_APPS"
+cp backend/${project_name}/settings.py backend/${project_name}/settings_.py
+sed "s/INSTALLED_APPS = \[/INSTALLED_APPS = [\n\t'char_count.apps.CharCountConfig',/"  backend/${project_name}/settings_.py > backend/${project_name}/settings.py
+rm backend/${project_name}/settings_.py
+
+echo "Change ALLOWED_HOSTS"
+IP=`ip addr list enp0s3 | grep "  inet " | head -n 1 | cut -d " " -f 6 | cut -d / -f 1`
+cp backend/${project_name}/settings.py backend/${project_name}/settings_.py
+sed "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = ['localhost','$IP', 'backend']/"  backend/${project_name}/settings_.py > backend/${project_name}/settings.py
+rm backend/${project_name}/settings_.py
+
+echo `Change backend/${project_name}/urls.py`
+echo "
+from django.contrib import admin
+from django.urls import path
+from char_count.views import char_count
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('char_count', char_count, name='char_count'),
+]" > backend/${project_name}/urls.py
+
+echo "Change proxy package.json"
+cp frontend/package.json frontend/package_.json
+sed "s/\"private\": true,/\n\t\"private\": true,\n\t\"proxy\"\: \"http\:\/\/backend\:8000\",/"  frontend/package_.json > frontend/package.json
+rm frontend/package_.json
+
+echo "Edit frontend/src/App.js"
+
+echo "import React from 'react';
+import axios from 'axios';
+import './App.css';
+
+function handleSubmit(event) {
+  const text = document.querySelector('#char-input').value
+
+  axios
+    .get(\`/char_count?text=\${text}\`).then(({data}) => {
+      document.querySelector('#char-count').textContent = \`\${data.count} characters!\`
+    })
+    .catch(err => console.log(err))
+}
+
+function App() {
+  return (
+    <div className=\"App\">
+      <div>
+        <label htmlFor='char-input'>How many characters does</label>
+        <input id='char-input' type='text' />
+        <button onClick={handleSubmit}>have?</button>
+      </div>
+
+      <div>
+        <h3 id='char-count'></h3>
+      </div>
+    </div>
+  );
+}
+
+export default App;" > frontend/src/App.js
+
+
+
+
+temp=`pwd|tr / "\n"|tail -1|head -1`
+sudo chown -R user:user /home/user/$temp/
+
+echo "Django migrate project"
+sudo docker-compose run --rm backend python manage.py migrate
+sudo docker-compose run --rm backend python createsuperuser
+
+echo "Docker-compose stop"
+sudo docker-compose stop
+
+echo "Docker remove"
+sudo docker rm $(sudo docker ps -aq)
+sudo docker rmi ${src}_backend
+sudo docker rmi ${src}_frontend
+
+echo "Docker-compose up"
+sudo docker-compose up --build

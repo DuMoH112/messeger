@@ -1,0 +1,55 @@
+.navbar {
+    height: inherit;
+    background-color: rgb(61, 61, 61);
+    text-align: center;
+}
+
+.navbar_navigations {
+    height: inherit;
+}
+
+.navbar_profile {
+    margin: 10px auto 0 auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid black;
+    background-color: #fff;
+}
+
+.navbar_navigations_items {
+    height: 95%;
+}
+
+.navbar_navigations_items ul {
+    position: relative;
+    height: inherit;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar_navigations_items li {
+    padding: 10px 5px;
+}
+
+.navbar_navigations_items #setting {
+    margin-bottom: 0;
+    /* position: absolute; */
+    /* bottom: 1%; */
+}
+
+.navbar_navigations_items a {
+    font-size: 10pt;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar_navigations_items a:hover,
+.navbar_navigations_items a:active {
+    color: #7097A8;
+}
+
+.icon {
+    font-size: 25px;
+}

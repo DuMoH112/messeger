@@ -1,0 +1,12 @@
+# Use an official node runtime as a parent image
+FROM node:12.14.1
+
+WORKDIR /app/frontend
+
+# Install dependencies
+# COPY package.json yarn.lock /app/
+
+# Add rest of the client code
+COPY . /app/frontend
+
+EXPOSE 3000

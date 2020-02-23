@@ -1,0 +1,40 @@
+body {
+    background-color: rgb(61, 61, 61);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body>div {
+    position: absolute;
+    height: inherit;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.wrapperClose {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 1fr 19fr;
+    grid-template-areas: "navbar cont";
+}
+
+.wrapperOpen {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 3fr 10fr;
+    grid-template-areas: "navbar cont";
+}
+
+.navbar {
+    grid-area: navbar;
+    height: 98%;
+    width: 100%;
+}
+
+.content {
+    grid-area: cont;
+    background: #7097A8;
+}

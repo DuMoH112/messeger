@@ -1,0 +1,45 @@
+[
+    {
+        "profile": {
+            "urlProfile": "dimaXXX",
+            "urlPhoto": "/resources/image/profile_photo/icon_profile.jpg",
+            "nickname": "DuMoH",
+            "firstName": "Dmity",
+            "lastName": "Evseev",
+            "about": "Hi, my name is Dima",
+            "settings": {}
+        },
+        "friends": [
+            "oxxyyy"
+        ],
+        "urlСonversation": []
+    },
+    {
+        "profile": {
+            "urlProfile": "oxxyyy",
+            "urlPhoto": "/resources/image/profile_photo/icon_profile.jpg",
+            "nickname": "Oxxy",
+            "firstName": "Oksana",
+            "lastName": "Hudyak",
+            "about": "Hi, my name is Oksana",
+            "settings": {}
+        },
+        "friends": [
+            "dimaXXX"
+        ],
+        "urlСonversation": []
+    },
+    {
+        "profile": {
+            "urlProfile": "Alexx",
+            "urlPhoto": "/resources/image/profile_photo/icon_profile.jpg",
+            "nickname": "Alex",
+            "firstName": "Alexey",
+            "lastName": "Lucai",
+            "about": "Hi, my name is Alxey",
+            "settings": {}
+        },
+        "friends": [],
+        "urlСonversation": []
+    }
+]

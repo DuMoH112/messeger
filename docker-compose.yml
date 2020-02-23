@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    image: postgres:11.5-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: candydb
+      POSTGRES_USER: candy
+
+
+  backend:
+    build: ./backend
+    environment:
+      - APP_ENV=dev
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "8000:8000"
+    stdin_open: true
+    tty: true
+    command: python3 manage.py runserver 0.0.0.0:8000
+
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app/frontend
+      # One-way volume to use node_modules from inside image
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    command: npm start
